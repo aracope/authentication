@@ -56,3 +56,9 @@ def secret():
         flash("You must be logged in to view that page.", "danger")
         return redirect("/login")
     return "You made it!"
+
+@app.route("/logout")
+def logout():
+    session.clear()
+    flash("You have been logged out.", "info")
+    return redirect("/")
