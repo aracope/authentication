@@ -36,7 +36,7 @@ def register():
         db.session.add(new_user)
         db.session.commit()
         session['username'] = new_user.username
-        return redirect("/secret")
+        return redirect(f"/users/{new_user.username}") 
     return render_template("register.html", form=form)
 
 @app.route("/login", methods=["GET", "POST"])
@@ -46,7 +46,7 @@ def login():
         user = User.query.get(form.username.data)
         if user and bcrypt.check_password_hash(user.password, form.password.data):
             session['username'] = user.username
-            return redirect("/secret")
+            return redirect(f"/users/{user.username}") 
         flash("Invalid credentials", "danger")
     return render_template("login.html", form=form)
 
@@ -62,3 +62,13 @@ def logout():
     session.clear()
     flash("You have been logged out.", "info")
     return redirect("/")
+
+@app.route("/users/<username>")
+def show_user(username):
+    if "username" not in session or session["username"] != username:
+        flash("You don't have permission to view that page.", "danger")
+        return redirect("/login")
+
+    user = User.query.get_or_404(username)
+    return render_template("user.html", user=user)
+
