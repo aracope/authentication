@@ -3,10 +3,31 @@
 {% block title %}{{ user.username }}'s Profile{% endblock %}
 
 {% block content %}
-  <h1>Welcome, {{ user.first_name }} {{ user.last_name }}!</h1>
-  <ul>
-    <li><strong>Username:</strong> {{ user.username }}</li>
-    <li><strong>Email:</strong> {{ user.email }}</li>
-  </ul>
-  <a href="/logout" class="btn btn-secondary">Log Out</a>
+<h1>Welcome, {{ user.username }}!</h1>
+<ul>
+  <li><strong>Username:</strong> {{ user.username }}</li>
+  <li><strong>Email:</strong> {{ user.email }}</li>
+</ul>
+<a href="/logout" class="btn btn-secondary">Log Out</a>
+
+<h3>Feedback:</h3>
+<ul>
+  {% for fb in user.feedback %}
+  <li>
+    <strong>{{ fb.title }}</strong>: {{ fb.content }}
+    <a href="{{ url_for('update_feedback', feedback_id=fb.id) }}">Edit</a>
+    <form action="{{ url_for('delete_feedback', feedback_id=fb.id) }}" method="POST" style="display:inline;">
+      <button class="btn btn-danger btn-sm">Delete</button>
+    </form>
+  </li>
+  {% else %}
+  <li>No feedback yet.</li>
+  {% endfor %}
+</ul>
+
+<a href="{{ url_for('add_feedback', username=user.username) }}" class="btn btn-primary">Add Feedback</a>
+
+<form action="{{ url_for('delete_user', username=user.username) }}" method="POST" style="margin-top:1rem;">
+  <button class="btn btn-danger">Delete Account</button>
+</form>
 {% endblock %}
